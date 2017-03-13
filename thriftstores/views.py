@@ -1,55 +1,51 @@
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from thriftstores.models import ThriftStore
 from thriftstores.serializers import ThriftStoreSerializer
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-"""
-Note that because we want to be able to POST to this view from clients
-that won't have a CSRF token we need to mark the view as csrf_exempt.
-This isn't something that you'd normally want to do, and REST framework
-views actually use more sensible behavior than this, but it'll do for our
-purposes right now.
-"""
-@api_view(['GET', 'POST'])
-def thriftstore_list(request, format=None):
+
+class ThriftStoreList(APIView):
     """
     List all thriftstores, or create a new thriftstore.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         thriftstores = ThriftStore.objects.all()
         serializer = ThriftStoreSerializer(thriftstores, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+    def post(self, request, format=None):
         serializer = ThriftStoreSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def thriftstore_detail(request, pk, format=None):
+class ThriftStoreDetail(APIView):
     """
-    Retrieve, update or delete a thriftstore.
+    Retrieve, update or delete a thriftstore instance.
     """
-    try:
-        thriftstore = ThriftStore.objects.get(pk=pk)
-    except ThriftStore.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return ThriftStore.objects.get(pk=pk)
+        except ThriftStore.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        thriftstore = self.get_object(pk)
         serializer = ThriftStoreSerializer(thriftstore)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+    def put(self, request, pk, format=None):
+        thriftstore = self.get_object(pk)
         serializer = ThriftStoreSerializer(thriftstore, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        thriftstore = self.get_object(pk)
         thriftstore.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
