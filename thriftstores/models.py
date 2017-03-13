@@ -17,3 +17,9 @@ class ThriftStore(models.Model):
     bizURL = models.CharField(max_length=100, blank=True, default='')
     locLat = models.FloatField(db_index=True)
     locLong = models.FloatField(db_index=True)
+
+    def __unicode__(self):
+        return self.bizName
+
+    def __str__(self):
+        return self.bizName
