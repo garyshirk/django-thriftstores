@@ -50,8 +50,10 @@ coverage.xml
 *.pot
 
 # Django stuff:
+*.pyc
 *.log
 local_settings.py
+key.txt
 
 # Flask stuff:
 instance/
