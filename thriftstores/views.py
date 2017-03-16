@@ -6,10 +6,10 @@ from rest_framework import generics
 #from django_filters.rest_framework import DjangoFilterBackend
 
 class ThriftStoreFilter(django_filters.rest_framework.FilterSet):
-    upper_long = django_filters.NumberFilter(name="locLong", lookup_expr='lt')
-    lower_long = django_filters.NumberFilter(name="locLong", lookup_expr='gt')
-    upper_lat = django_filters.NumberFilter(name="locLat", lookup_expr='lt')
-    lower_lat = django_filters.NumberFilter(name="locLat", lookup_expr='gt')
+    east_long = django_filters.NumberFilter(name="locLong", lookup_expr='lt')
+    west_long = django_filters.NumberFilter(name="locLong", lookup_expr='gt')
+    north_lat = django_filters.NumberFilter(name="locLat", lookup_expr='lt')
+    south_lat = django_filters.NumberFilter(name="locLat", lookup_expr='gt')
 
     #max_price = django_filters.NumberFilter(name="price", lookup_expr='lte')
     class Meta:
